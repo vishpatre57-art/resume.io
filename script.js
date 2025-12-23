@@ -1,42 +1,30 @@
-// DOM-ready initialization
-document.addEventListener('DOMContentLoaded', () => {
-  const html = document.documentElement;
-  const themeBtn = document.querySelector('.theme-toggle');
-  const menuBtn = document.querySelector('.menu-toggle');
-  const navLinks = document.querySelector('.nav-links');
-
-  // Persist theme
+// Theme toggle & utilities
+(function(){
+  const root = document.documentElement;
+  const toggle = document.querySelector('.theme-toggle');
+  const yearEl = document.getElementById('year');
   const saved = localStorage.getItem('theme');
-  if (saved === 'light') html.classList.add('light');
+  if(saved === 'light') document.body.classList.add('light');
 
-  // Toggle theme
-  function toggleTheme() {
-    html.classList.toggle('light');
-    localStorage.setItem('theme', html.classList.contains('light') ? 'light' : 'dark');
-  }
+  toggle && toggle.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    localStorage.setItem('theme', document.body.classList.contains('light') ? 'light' : 'dark');
+  });
 
-  // Toggle menu (for mobile)
-  function toggleMenu() {
-    const willShow = !navLinks.classList.contains('show');
-    navLinks.classList.toggle('show', willShow);
-    menuBtn.setAttribute('aria-expanded', String(willShow));
-  }
-
-  if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
-  if (menuBtn && navLinks) menuBtn.addEventListener('click', toggleMenu);
-
-  // Reveal on scroll
-  const onScroll = () => {
-    document.querySelectorAll('.reveal').forEach(el => {
-      const rect = el.getBoundingClientRect();
-      if (rect.top < window.innerHeight - 80) el.classList.add('visible');
+  // Smooth scroll for in-page links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href').substring(1);
+      const target = document.getElementById(targetId);
+      if(target){
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
     });
-  };
+  });
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll(); // initial fire
+  // Set current year
+  if(yearEl) yearEl.textContent = new Date().getFullYear();
 
-  // Footer year
-  const year = document.getElementById('year');
-  if (year) year.textContent = new Date().getFullYear();
-});
+  // Accessibility: trap focus in nav when using keyboard on small screens - demo
+})();
