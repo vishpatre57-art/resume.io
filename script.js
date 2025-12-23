@@ -1,4 +1,3 @@
-
 // Theme toggle & mobile menu
 const html = document.documentElement;
 const themeBtn = document.querySelector('.theme-toggle');
